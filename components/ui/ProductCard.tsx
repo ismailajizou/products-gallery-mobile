@@ -8,6 +8,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <Image source={{ uri: product.image }} style={styles.image} resizeMode="contain" />
       </View>
       <View style={styles.contentContainer}>
+        <Text style={styles.category}>{product.category}</Text>
         <Text style={styles.title} numberOfLines={2}>{product.title}</Text>
         <Text style={styles.price}>${product.price}</Text>
         <Text style={styles.description} numberOfLines={3}>{product.description}</Text>
@@ -43,6 +44,11 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 16,
+  },
+  category: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 8,
   },
   title: {
     fontSize: 18,
