@@ -156,7 +156,14 @@ const useProducts = () => {
     });
   };
 
-  const setSort = (sort: Sort) => {
+  const setSort = (sort: Sort | '') => {
+    if (sort === '') {
+      dispatch({
+        type: 'SET_SORT',
+        payload: { sort: 'asc', products: state.initialProducts },
+      });
+      return;
+    }
     const filteredProducts = applyFiltersAndSort(
       state.initialProducts,
       state.category,

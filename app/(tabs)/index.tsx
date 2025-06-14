@@ -86,6 +86,7 @@ export default function HomeScreen() {
                 onValueChange={(itemValue) => setSort(itemValue)}
                 style={styles.picker}
               >
+                <Picker.Item label="Select Sort" value="" />
                 {SORT_OPTIONS.map((sort) => (
                   <Picker.Item
                     key={sort.value}
