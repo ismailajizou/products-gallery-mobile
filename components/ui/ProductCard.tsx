@@ -5,7 +5,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: product.image }} style={styles.image} resizeMode="cover" />
+        <Image source={{ uri: product.image }} style={styles.image} resizeMode="contain" />
       </View>
       <View style={styles.contentContainer}>
         <Text style={styles.title} numberOfLines={2}>{product.title}</Text>
@@ -33,8 +33,9 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: '100%',
+    paddingVertical: 10,
     height: 200,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fff',
   },
   image: {
     width: '100%',
