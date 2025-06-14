@@ -4,12 +4,16 @@ import useProducts from "@/hooks/useProducts";
 import { Picker } from "@react-native-picker/picker";
 import {
   ActivityIndicator,
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+
+const { width: screenWidth } = Dimensions.get('window');
+const isTablet = screenWidth > 600;
 
 export default function HomeScreen() {
   const { state, setCategory, setSort, setSearch, toggleFavorite, favorites } =
@@ -58,8 +62,8 @@ export default function HomeScreen() {
           />
         </View>
 
-        <View style={styles.filtersRow}>
-          <View style={styles.filterContainer}>
+        <View style={[styles.filtersRow, isTablet ? styles.filtersRowTablet : styles.filtersRowPhone]}>
+          <View style={[styles.filterContainer, isTablet && styles.filterContainerTablet]}>
             <Text style={styles.filterLabel}>Category</Text>
             <View style={styles.pickerWrapper}>
               <Picker
@@ -78,7 +82,7 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <View style={styles.filterContainer}>
+          <View style={[styles.filterContainer, isTablet && styles.filterContainerTablet]}>
             <Text style={styles.filterLabel}>Sort By</Text>
             <View style={styles.pickerWrapper}>
               <Picker
@@ -100,7 +104,7 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      <View style={styles.productsContainer}>
+      <View style={[styles.productsContainer, isTablet && styles.productsContainerTablet]}>
         {state.products.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyTitle}>No products found</Text>
@@ -111,14 +115,17 @@ export default function HomeScreen() {
             </Text>
           </View>
         ) : (
-          state.products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              handleFavorite={toggleFavorite}
-              isFavorite={favorites.includes(product.id)}
-            />
-          ))
+          <View style={[styles.productsGrid, isTablet && styles.productsGridTablet]}>
+            {state.products.map((product) => (
+                             <ProductCard
+                 key={product.id}
+                 product={product}
+                 handleFavorite={toggleFavorite}
+                 isFavorite={favorites.includes(product.id)}
+                 isTablet={isTablet}
+               />
+            ))}
+          </View>
         )}
       </View>
     </ScrollView>
@@ -131,38 +138,51 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   contentContainer: {
-    paddingTop: 60,
+    paddingTop: isTablet ? 80 : 60,
     paddingHorizontal: 16,
-    paddingBottom: 50, // Fixed bottom spacing issue
+    paddingBottom: 50,
   },
   header: {
-    marginBottom: 24,
+    marginBottom: isTablet ? 32 : 24,
     paddingHorizontal: 4,
   },
   title: {
-    fontSize: 32,
+    fontSize: isTablet ? 40 : 32,
     fontWeight: "800",
     color: "#1a1a1a",
     marginBottom: 4,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     color: "#6b7280",
     fontWeight: "400",
   },
   productsContainer: {
-    gap: 4, // Reduced gap since ProductCard has its own margin
+    flex: 1,
+  },
+  productsContainerTablet: {
+    alignItems: 'center',
+  },
+  productsGrid: {
+    flexDirection: 'column',
+    gap: 4,
+  },
+  productsGridTablet: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 16,
   },
   filters: {
-    marginBottom: 24,
-    gap: 16,
+    marginBottom: isTablet ? 32 : 24,
+    gap: isTablet ? 20 : 16,
   },
   searchContainer: {
     marginBottom: 8,
   },
   filterLabel: {
-    fontSize: 14,
+    fontSize: isTablet ? 16 : 14,
     fontWeight: "600",
     color: "#374151",
     marginBottom: 8,
@@ -170,12 +190,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   searchInput: {
-    height: 48,
+    height: isTablet ? 56 : 48,
     width: "100%",
     backgroundColor: "#ffffff",
     borderRadius: 12,
     paddingHorizontal: 16,
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     borderWidth: 1,
     borderColor: "#E5E7EB",
     shadowColor: "#000",
@@ -188,14 +208,22 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   filtersRow: {
-    flexDirection: "row",
     gap: 12,
+  },
+  filtersRowPhone: {
+    flexDirection: "column",
+  },
+  filtersRowTablet: {
+    flexDirection: "row",
   },
   filterContainer: {
     flex: 1,
   },
+  filterContainerTablet: {
+    minWidth: 200,
+  },
   pickerWrapper: {
-    height: 48,
+    height: isTablet ? 56 : 48,
     backgroundColor: "#ffffff",
     borderRadius: 12,
     borderWidth: 1,
@@ -221,7 +249,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   loadingText: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     fontWeight: "600",
     color: "#3B82F6",
     marginTop: 16,
@@ -235,14 +263,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   errorTitle: {
-    fontSize: 24,
+    fontSize: isTablet ? 28 : 24,
     fontWeight: "800",
     color: "#EF4444",
     marginBottom: 8,
     textAlign: "center",
   },
   errorMessage: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     color: "#6b7280",
     fontWeight: "400",
     textAlign: "center",
@@ -250,18 +278,18 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     alignItems: "center",
-    paddingVertical: 60,
+    paddingVertical: isTablet ? 80 : 60,
     paddingHorizontal: 20,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: isTablet ? 24 : 20,
     fontWeight: "700",
     color: "#374151",
     marginBottom: 8,
     textAlign: "center",
   },
   emptyMessage: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     color: "#6b7280",
     fontWeight: "400",
     textAlign: "center",
