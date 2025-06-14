@@ -2,10 +2,18 @@ import ProductCard from "@/components/ui/ProductCard";
 import { CATEGORIES, SORT_OPTIONS } from "@/constants/Products";
 import useProducts from "@/hooks/useProducts";
 import { Picker } from "@react-native-picker/picker";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 export default function HomeScreen() {
-  const { state, setCategory, setSort, setSearch } = useProducts();
+  const { state, setCategory, setSort, setSearch, toggleFavorite, favorites } =
+    useProducts();
 
   if (state.isLoading) {
     return (
@@ -20,7 +28,9 @@ export default function HomeScreen() {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorTitle}>Oops! Something went wrong</Text>
-        <Text style={styles.errorMessage}>{state.error || 'Failed to load products'}</Text>
+        <Text style={styles.errorMessage}>
+          {state.error || "Failed to load products"}
+        </Text>
       </View>
     );
   }
@@ -47,7 +57,7 @@ export default function HomeScreen() {
             placeholderTextColor="#9CA3AF"
           />
         </View>
-        
+
         <View style={styles.filtersRow}>
           <View style={styles.filterContainer}>
             <Text style={styles.filterLabel}>Category</Text>
@@ -67,7 +77,7 @@ export default function HomeScreen() {
               </Picker>
             </View>
           </View>
-          
+
           <View style={styles.filterContainer}>
             <Text style={styles.filterLabel}>Sort By</Text>
             <View style={styles.pickerWrapper}>
@@ -94,15 +104,19 @@ export default function HomeScreen() {
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyTitle}>No products found</Text>
             <Text style={styles.emptyMessage}>
-              {state.search || state.category 
-                ? 'Try adjusting your filters or search terms'
-                : 'No products available at the moment'
-              }
+              {state.search || state.category
+                ? "Try adjusting your filters or search terms"
+                : "No products available at the moment"}
             </Text>
           </View>
         ) : (
           state.products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              handleFavorite={toggleFavorite}
+              isFavorite={favorites.includes(product.id)}
+            />
           ))
         )}
       </View>

@@ -1,6 +1,7 @@
 import { getAll } from '@/services/products.service';
 import type { Product, Sort } from '@/types/products';
 import { useEffect, useReducer } from 'react';
+import { usePersistedState } from './usePersistedState';
 
 type Action =
   | {
@@ -46,10 +47,7 @@ const INITIAL_STATE: State = {
 };
 
 const useProducts = () => {
-//   const [favorites, setFavorites] = usePersistedState<number[]>(
-//     'favorites',
-//     [],
-//   );
+  const [favorites, setFavorites] = usePersistedState<number[]>('favorites', []);
 
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
@@ -189,22 +187,22 @@ const useProducts = () => {
     });
   };
 
-//   const toggleFavorite = (product: Product) => {
-//     setFavorites(prev => {
-//       if (prev.includes(product.id)) {
-//         return prev.filter(id => id !== product.id);
-//       }
-//       return [...prev, product.id];
-//     });
-//   };
+  const toggleFavorite = (product: Product) => {
+    setFavorites(prev => {
+      if (prev.includes(product.id)) {
+        return prev.filter(id => id !== product.id);
+      }
+      return [...prev, product.id];
+    });
+  };
 
   return {
     state,
     setCategory,
     setSort,
     setSearch,
-    // toggleFavorite,
-    // favorites,
+    toggleFavorite,
+    favorites,
   };
 };
 

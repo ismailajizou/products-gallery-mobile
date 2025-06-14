@@ -1,9 +1,26 @@
 import { Product } from "@/types/products";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, handleFavorite, isFavorite }: { product: Product, handleFavorite: (product: Product) => void, isFavorite: boolean }) {
   return (
     <View style={styles.container}>
+      <View style={styles.favoriteContainer}>
+        <TouchableOpacity 
+        style={{
+            backgroundColor: isFavorite ? "#ffebee" : "rgba(255, 255, 255, 0.9)",
+            padding: 8,
+            borderRadius: 20,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.2,
+            shadowRadius: 2,
+            elevation: 3,
+        }}
+        onPress={() => handleFavorite(product)}>
+            <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={20} color={isFavorite ? "#e91e63" : "#666"} />
+        </TouchableOpacity>
+      </View>
       <View style={styles.imageContainer}>
         <Image source={{ uri: product.image }} style={styles.image} resizeMode="contain" />
       </View>
@@ -30,7 +47,6 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 5,
     margin: 8,
-    overflow: 'hidden',
   },
   imageContainer: {
     width: '100%',
@@ -44,6 +60,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 16,
+
   },
   category: {
     fontSize: 14,
@@ -68,4 +85,10 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     lineHeight: 20,
   },
+  favoriteContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 10,
+  },  
 });
