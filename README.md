@@ -1,50 +1,63 @@
-# Welcome to your Expo app 👋
+# Product Gallery Mobile App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native mobile app built with Expo that displays a product catalog with search, filtering, favorites, and offline support.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Product catalog with search and category filtering
+- Price sorting (ascending/descending)
+- Favorites with persistent storage
+- Offline support with automatic caching
+- Responsive design for phones and tablets
 
-   ```bash
-   npm install
-   ```
+## Setup
 
-2. Start the app
+### Prerequisites
+- Node.js (v16+)
+- Expo CLI: `npm install -g @expo/cli`
+- Mobile device with Expo Go or emulator
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+### Installation
 ```bash
-npm run reset-project
+# Clone and install
+git clone https://github.com/ismailajizou/products-gallery-mobile.git
+cd mobile
+npm install
+
+# Start development server
+npm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Then scan the QR code with Expo Go or press `i`/`a` for iOS/Android simulator.
 
-## Learn more
+## Design Decisions
 
-To learn more about developing your project with Expo, look at the following resources:
+### Architecture
+- **State Management**: Custom `useReducer` hook for simplicity over external libraries
+- **Offline-First**: 24-hour caching with automatic API/cache fallback
+- **Responsive**: Adaptive layouts for tablets vs phones
+- **TypeScript**: Full type safety throughout
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Tech Stack
+- Expo SDK 53 / React Native 0.79
+- Expo Router for file-based navigation
+- AsyncStorage for persistence
+- Axios for API calls
 
-## Join the community
+## Improvements for More Time
 
-Join our community of developers creating universal apps.
+### Performance & UX
+- Image loading placeholders and better caching
+- Skeleton loading states and animations
+- Pull-to-refresh functionality
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Features
+- Product detail screens with image galleries
+- Shopping cart functionality
+- Advanced search with autocomplete
+
+### Quality
+- Unit and E2E testing
+- Error retry mechanisms
+- Better error handling and user feedback
+- CI/CD pipeline
