@@ -28,4 +28,4 @@ export const useNetworkStatus = () => {
     isInternetReachable,
     isOnline: isConnected && isInternetReachable,
   };
-}; 
+};

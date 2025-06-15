@@ -54,47 +54,44 @@ const useProducts = () => {
   const [favorites, setFavorites] = usePersistedState<number[]>('favorites', []);
   const { isOnline } = useNetworkStatus();
 
-  const [state, dispatch] = useReducer(
-    (state: State, action: Action): State => {
-      switch (action.type) {
-        case 'SET_INITIAL_PRODUCTS':
-          return {
-            ...state,
-            initialProducts: action.payload,
-            products: action.payload,
-          };
-        case 'SET_CATEGORY':
-          return {
-            ...state,
-            category: action.payload.category,
-            products: action.payload.products,
-          };
-        case 'SET_SORT':
-          return {
-            ...state,
-            sort: action.payload.sort,
-            products: action.payload.products,
-          };
-        case 'SET_SEARCH':
-          return {
-            ...state,
-            search: action.payload.search,
-            products: action.payload.products,
-          };
-        case 'SET_ERROR':
-          return { ...state, error: action.payload };
-        case 'SET_IS_ERROR':
-          return { ...state, isError: action.payload };
-        case 'SET_IS_LOADING':
-          return { ...state, isLoading: action.payload };
-        case 'SET_OFFLINE_MODE':
-          return { ...state, isOfflineMode: action.payload };
-        default:
-          return state;
-      }
-    },
-    INITIAL_STATE,
-  );
+  const [state, dispatch] = useReducer((state: State, action: Action): State => {
+    switch (action.type) {
+      case 'SET_INITIAL_PRODUCTS':
+        return {
+          ...state,
+          initialProducts: action.payload,
+          products: action.payload,
+        };
+      case 'SET_CATEGORY':
+        return {
+          ...state,
+          category: action.payload.category,
+          products: action.payload.products,
+        };
+      case 'SET_SORT':
+        return {
+          ...state,
+          sort: action.payload.sort,
+          products: action.payload.products,
+        };
+      case 'SET_SEARCH':
+        return {
+          ...state,
+          search: action.payload.search,
+          products: action.payload.products,
+        };
+      case 'SET_ERROR':
+        return { ...state, error: action.payload };
+      case 'SET_IS_ERROR':
+        return { ...state, isError: action.payload };
+      case 'SET_IS_LOADING':
+        return { ...state, isLoading: action.payload };
+      case 'SET_OFFLINE_MODE':
+        return { ...state, isOfflineMode: action.payload };
+      default:
+        return state;
+    }
+  }, INITIAL_STATE);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -104,7 +101,7 @@ const useProducts = () => {
         dispatch({ type: 'SET_ERROR', payload: null });
 
         let products: Product[] = [];
-        
+
         if (isOnline === false) {
           // We're offline, try to get cached products
           try {
@@ -146,26 +143,17 @@ const useProducts = () => {
     loadProducts();
   }, [isOnline]);
 
-  const applyFiltersAndSort = (
-    products: Product[],
-    category: string,
-    search: string,
-    sort: Sort,
-  ) => {
+  const applyFiltersAndSort = (products: Product[], category: string, search: string, sort: Sort) => {
     let filteredProducts = [...products];
 
     // Apply category filter
     if (category) {
-      filteredProducts = filteredProducts.filter(
-        product => product.category === category,
-      );
+      filteredProducts = filteredProducts.filter(product => product.category === category);
     }
 
     // Apply search filter
     if (search) {
-      filteredProducts = filteredProducts.filter(product =>
-        product.title.toLowerCase().includes(search.toLowerCase()),
-      );
+      filteredProducts = filteredProducts.filter(product => product.title.toLowerCase().includes(search.toLowerCase()));
     }
 
     // Apply sorting
@@ -180,12 +168,7 @@ const useProducts = () => {
   };
 
   const setCategory = (category: string) => {
-    const filteredProducts = applyFiltersAndSort(
-      state.initialProducts,
-      category,
-      state.search,
-      state.sort,
-    );
+    const filteredProducts = applyFiltersAndSort(state.initialProducts, category, state.search, state.sort);
 
     dispatch({
       type: 'SET_CATEGORY',
@@ -204,12 +187,7 @@ const useProducts = () => {
       });
       return;
     }
-    const filteredProducts = applyFiltersAndSort(
-      state.initialProducts,
-      state.category,
-      state.search,
-      sort,
-    );
+    const filteredProducts = applyFiltersAndSort(state.initialProducts, state.category, state.search, sort);
 
     dispatch({
       type: 'SET_SORT',
@@ -218,12 +196,7 @@ const useProducts = () => {
   };
 
   const setSearch = (search: string) => {
-    const filteredProducts = applyFiltersAndSort(
-      state.initialProducts,
-      state.category,
-      search,
-      state.sort,
-    );
+    const filteredProducts = applyFiltersAndSort(state.initialProducts, state.category, search, state.sort);
 
     dispatch({
       type: 'SET_SEARCH',

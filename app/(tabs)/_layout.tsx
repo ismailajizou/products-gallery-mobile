@@ -1,7 +1,5 @@
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Tabs } from 'expo-router';
 import React from 'react';
-
 
 export default function TabLayout() {
   return (
@@ -12,7 +10,7 @@ export default function TabLayout() {
         tabBarStyle: {
           display: 'none',
         },
-      }}>
-    </Tabs>
+      }}
+    ></Tabs>
   );
 }

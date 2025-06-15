@@ -7,10 +7,7 @@ import { useEffect, useState } from 'react';
  * @param initialValue - The initial value if no stored value exists
  * @returns [value, setValue] - Similar to useState but with persistence
  */
-export function usePersistedState<T>(
-  key: string,
-  initialValue: T
-): [T, (value: T | ((prevValue: T) => T)) => void] {
+export function usePersistedState<T>(key: string, initialValue: T): [T, (value: T | ((prevValue: T) => T)) => void] {
   const [state, setState] = useState<T>(initialValue);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -55,4 +52,4 @@ export function usePersistedState<T>(
   };
 
   return [state, setValue];
-} 
+}

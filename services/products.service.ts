@@ -16,20 +16,20 @@ export const getAll = async (): Promise<Product[]> => {
     // Try to fetch fresh data from API
     const response = await api.get<Product[]>('/products');
     const products = response.data;
-    
+
     // Cache the fresh data
     await cacheProducts(products);
-    
+
     return products;
   } catch (error) {
     console.log('API failed, trying cached data:', error);
-    
+
     // If API fails, try to get cached data
     const cachedProducts = await getCachedProducts();
     if (cachedProducts) {
       return cachedProducts;
     }
-    
+
     // If no cached data, throw the original error
     throw error;
   }
@@ -38,23 +38,23 @@ export const getAll = async (): Promise<Product[]> => {
 export const getCachedProducts = async (): Promise<Product[] | null> => {
   try {
     const cachedData = await AsyncStorage.getItem(PRODUCTS_CACHE_KEY);
-    
+
     if (!cachedData) {
       return null;
     }
-    
+
     const parsed: CachedProducts = JSON.parse(cachedData);
-    
+
     // Check if cache is still valid (within 24 hours)
     const now = Date.now();
     const isExpired = now - parsed.timestamp > CACHE_DURATION;
-    
+
     if (isExpired) {
       // Cache expired, remove it
       await AsyncStorage.removeItem(PRODUCTS_CACHE_KEY);
       return null;
     }
-    
+
     return parsed.data;
   } catch (error) {
     console.error('Error reading cached products:', error);
@@ -68,7 +68,7 @@ export const cacheProducts = async (products: Product[]): Promise<void> => {
       data: products,
       timestamp: Date.now(),
     };
-    
+
     await AsyncStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify(cacheData));
   } catch (error) {
     console.error('Error caching products:', error);
