@@ -16,7 +16,7 @@ const { width: screenWidth } = Dimensions.get('window');
 const isTablet = screenWidth > 600;
 
 export default function HomeScreen() {
-  const { state, setCategory, setSort, setSearch, toggleFavorite, favorites } =
+  const { state, setCategory, setSort, setSearch, toggleFavorite, favorites, isOnline } =
     useProducts();
 
   if (state.isLoading) {
@@ -48,6 +48,13 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>Product Gallery</Text>
         <Text style={styles.subtitle}>Discover amazing products</Text>
+        {state.isOfflineMode && (
+          <View style={styles.offlineIndicator}>
+            <Text style={styles.offlineText}>
+              📱 Offline Mode - Showing cached products
+            </Text>
+          </View>
+        )}
       </View>
 
       <View style={styles.filters}>
@@ -294,5 +301,20 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     textAlign: "center",
     lineHeight: 22,
+  },
+  offlineIndicator: {
+    backgroundColor: "#FEF3C7",
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: "#F59E0B",
+  },
+  offlineText: {
+    fontSize: isTablet ? 16 : 14,
+    color: "#92400E",
+    fontWeight: "600",
+    textAlign: "center",
   },
 });

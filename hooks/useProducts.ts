@@ -1,6 +1,7 @@
-import { getAll } from '@/services/products.service';
+import { getAll, getCachedProducts, getFromCacheOnly } from '@/services/products.service';
 import type { Product, Sort } from '@/types/products';
 import { useEffect, useReducer } from 'react';
+import { useNetworkStatus } from './useNetworkStatus';
 import { usePersistedState } from './usePersistedState';
 
 type Action =
@@ -20,9 +21,10 @@ type Action =
       type: 'SET_SEARCH';
       payload: { search: string; products: Product[] };
     }
-  | { type: 'SET_ERROR'; payload: string }
+  | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'SET_IS_ERROR'; payload: boolean }
-  | { type: 'SET_IS_LOADING'; payload: boolean };
+  | { type: 'SET_IS_LOADING'; payload: boolean }
+  | { type: 'SET_OFFLINE_MODE'; payload: boolean };
 
 type State = {
   initialProducts: Product[];
@@ -33,6 +35,7 @@ type State = {
   isLoading: boolean;
   isError: boolean;
   error: string | null;
+  isOfflineMode: boolean;
 };
 
 const INITIAL_STATE: State = {
@@ -44,10 +47,12 @@ const INITIAL_STATE: State = {
   isLoading: true,
   isError: false,
   error: null,
+  isOfflineMode: false,
 };
 
 const useProducts = () => {
   const [favorites, setFavorites] = usePersistedState<number[]>('favorites', []);
+  const { isOnline } = useNetworkStatus();
 
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
@@ -82,6 +87,8 @@ const useProducts = () => {
           return { ...state, isError: action.payload };
         case 'SET_IS_LOADING':
           return { ...state, isLoading: action.payload };
+        case 'SET_OFFLINE_MODE':
+          return { ...state, isOfflineMode: action.payload };
         default:
           return state;
       }
@@ -90,21 +97,54 @@ const useProducts = () => {
   );
 
   useEffect(() => {
-    getAll()
-      .then(products => {
+    const loadProducts = async () => {
+      try {
+        dispatch({ type: 'SET_IS_LOADING', payload: true });
+        dispatch({ type: 'SET_IS_ERROR', payload: false });
+        dispatch({ type: 'SET_ERROR', payload: null });
+
+        let products: Product[] = [];
+        
+        if (isOnline === false) {
+          // We're offline, try to get cached products
+          try {
+            products = await getFromCacheOnly();
+            dispatch({ type: 'SET_OFFLINE_MODE', payload: true });
+          } catch (error) {
+            throw new Error('No internet connection and no cached data available');
+          }
+        } else {
+          // We're online or network status is unknown, try API first
+          try {
+            products = await getAll(); // This will try API first, then cache
+            dispatch({ type: 'SET_OFFLINE_MODE', payload: false });
+          } catch (error) {
+            // If API fails, try cache
+            const cachedProducts = await getCachedProducts();
+            if (cachedProducts) {
+              products = cachedProducts;
+              dispatch({ type: 'SET_OFFLINE_MODE', payload: true });
+            } else {
+              throw error;
+            }
+          }
+        }
+
         dispatch({
           type: 'SET_INITIAL_PRODUCTS',
           payload: products,
         });
-      })
-      .catch(error => {
+      } catch (error: any) {
         dispatch({ type: 'SET_ERROR', payload: error.message });
         dispatch({ type: 'SET_IS_ERROR', payload: true });
-      })
-      .finally(() => {
+        dispatch({ type: 'SET_OFFLINE_MODE', payload: isOnline === false });
+      } finally {
         dispatch({ type: 'SET_IS_LOADING', payload: false });
-      });
-  }, []);
+      }
+    };
+
+    loadProducts();
+  }, [isOnline]);
 
   const applyFiltersAndSort = (
     products: Product[],
@@ -210,6 +250,7 @@ const useProducts = () => {
     setSearch,
     toggleFavorite,
     favorites,
+    isOnline: isOnline ?? true, // Default to true if network status is unknown
   };
 };
 
